@@ -3,8 +3,8 @@ export default {
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		screens: {
-			mobile: '375',
-			desktop: '1440',
+			mobile: 375,
+			desktop: 1440,
 		},
 		extend: {
 			colors: {
