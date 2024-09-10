@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback , useState } from 'react';
 import Button from './components/Button';
 import Input from './components/Input';
 import Title from './components/Title';
@@ -6,7 +6,54 @@ import IconPerson from '/images/icon-person.svg';
 import Summary from './components/Summary';
 
 function App() {
+	const [bill, setBill] = useState(0);
 	const [currentTips, setCurrentTips] = useState(10);
+	const [person, setPerson] = useState(1);
+	const [customTip, setCustomTip] = useState(NaN);
+	const calTipAmountPerPerson = useCallback(() => {
+		return Number((bill * (currentTips / 100)) / person).toFixed(2);
+	}, [bill, currentTips, person]);
+
+	const calTotalAmountPerPerson = useCallback(() => {
+		return Number(bill / person + bill * (currentTips / 100)).toFixed(2);
+	}, [bill, currentTips, person]);
+
+	function handleOnChangeBill(e: React.ChangeEvent<HTMLInputElement>) {
+		const value = e.target.value;
+		if (!value) setBill(0);
+		// eslint-disable-next-line no-extra-boolean-cast
+		else if (!!Number(value)) {
+			setBill(Number(value));
+		}
+	}
+
+	function handleOnChangePerson(e: React.ChangeEvent<HTMLInputElement>) {
+		const value = e.target.value;
+		if (!value) setPerson(1);
+		// eslint-disable-next-line no-extra-boolean-cast
+		else if (!!Number(value)) {
+			setPerson(Number(value));
+		}
+	}
+
+	function handleCustomTip(e: React.ChangeEvent<HTMLInputElement>) {
+		const value = e.target.value;
+		if (!value) {
+			setCustomTip(0);
+			setCurrentTips(0);
+		}
+		// eslint-disable-next-line no-extra-boolean-cast
+		else if (!!Number(value)) {
+			setCustomTip(Number(value));
+			setCurrentTips(Number(value));
+		}
+	}
+
+	function handleSelectTips(tip: number) {
+		setCurrentTips(tip);
+		setCustomTip(NaN);
+	}
+
 	return (
 		<section className='bg-light-grayish-cyan min-h-screen font-space-mono pt-7'>
 			{/* app logo height 80px */}
@@ -16,11 +63,15 @@ function App() {
 			</div>
 
 			{/* body  height : 100vh- 28px + 80px + 32px */}
-			<section className='rounded-t-large desktop:rounded-b-large  desktop:w-[920px] mx-auto shadow-lg relative bg-white mt-8 p-8 overflow-auto flex flex-col desktop:flex-row gap-8'>
+			<section className='rounded-t-large desktop:rounded-b-large desktop:w-[920px] mx-auto shadow-lg relative bg-white mt-8 p-8 overflow-auto flex flex-wrap flex-col desktop:flex-row gap-8'>
 				<div className='desktop:flex-1'>
 					<div className='space-y-4'>
 						<Title title='Bill' />
-						<Input prefixIcon={'$'} />
+						<Input
+							prefixIcon={'$'}
+							value={bill}
+							onChange={handleOnChangeBill}
+						/>
 					</div>
 					<div className='space-y-4'>
 						<Title title='Select tip %' />
@@ -28,29 +79,35 @@ function App() {
 							<Button
 								title='5%'
 								isActive={currentTips === 5}
+								onClick={() => handleSelectTips(5)}
 							/>
 							<Button
 								title='10%'
 								isActive={currentTips === 10}
+								onClick={() => handleSelectTips(10)}
 							/>
 							<Button
 								title='15%'
 								isActive={currentTips === 15}
+								onClick={() => handleSelectTips(15)}
 							/>
 							<Button
 								title='25%'
 								isActive={currentTips === 25}
+								onClick={() => handleSelectTips(25)}
 							/>
 							<Button
 								title='50%'
 								isActive={currentTips === 50}
+								onClick={() => handleSelectTips(50)}
 							/>
-							<button
-								className={
-									'rounded-small h-8 font-bold bg-very-light-grayish-cyan text-grayish-cyan'
-								}>
-								Custom
-							</button>
+							<input
+								type='number'
+								className='focus:outline-strong-cyan rounded-small flex justify-between bg-very-light-grayish-cyan h-8 w-full p-4 text-right font-bold text-dark-cyan placeholder:text-grayish-cyan '
+								placeholder='Custom'
+								onChange={handleCustomTip}
+								value={customTip}
+							/>
 						</div>
 					</div>
 					<div className='space-y-4'>
@@ -63,6 +120,8 @@ function App() {
 									className='mt-1'
 								/>
 							}
+							value={person}
+							onChange={handleOnChangePerson}
 						/>
 					</div>
 				</div>
@@ -73,19 +132,19 @@ function App() {
 							title='Tip Amount'
 							description='/ person'
 						/>
-						<Summary.NumberItem value='4.27' />
+						<Summary.NumberItem value={calTipAmountPerPerson()} />
 					</div>
 					<div className='flex justify-between items-center desktop:mb-auto'>
 						<Summary.TitleItem
 							title='Total'
 							description='/ person'
 						/>
-						<Summary.NumberItem value='32.79' />
+						<Summary.NumberItem value={calTotalAmountPerPerson()} />
 					</div>
 					<Button
 						className='w-full'
 						isActive
-						title='15%'></Button>
+						title='Reset'></Button>
 				</Summary.CardItem>
 
 				{/* footer */}
