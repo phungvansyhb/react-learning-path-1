@@ -1,4 +1,4 @@
-import { useCallback , useState } from 'react';
+import { useCallback, useState } from 'react';
 import Button from './components/Button';
 import Input from './components/Input';
 import Title from './components/Title';
@@ -10,6 +10,7 @@ function App() {
 	const [currentTips, setCurrentTips] = useState(10);
 	const [person, setPerson] = useState(1);
 	const [customTip, setCustomTip] = useState(NaN);
+	const isDisable = bill === 0 || person === 0;
 	const calTipAmountPerPerson = useCallback(() => {
 		return Number((bill * (currentTips / 100)) / person).toFixed(2);
 	}, [bill, currentTips, person]);
@@ -52,6 +53,15 @@ function App() {
 	function handleSelectTips(tip: number) {
 		setCurrentTips(tip);
 		setCustomTip(NaN);
+	}
+
+	function handleReset() {
+		if (!isDisable) {
+			setBill(0);
+			setPerson(1);
+			setCurrentTips(10);
+			setCustomTip(NaN);
+		}
 	}
 
 	return (
@@ -143,8 +153,10 @@ function App() {
 					</div>
 					<Button
 						className='w-full'
-						isActive
-						title='Reset'></Button>
+						isActive={!isDisable}
+						title='Reset'
+						onClick={() => handleReset()}
+					/>
 				</Summary.CardItem>
 
 				{/* footer */}

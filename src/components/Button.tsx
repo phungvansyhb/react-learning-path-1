@@ -6,12 +6,11 @@ type Props = {
 } & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 
 export default function Button({ title, isActive, ...rest }: Props) {
-	const KlassName = isActive ? 'bg-strong-cyan text-dark-cyan' : 'bg-dark-cyan text-white';
+	const KlassName = isActive ? 'bg-strong-cyan text-dark-cyan' : 'bg-grayish-cyan text-white';
 	return (
 		<button
 			{...rest}
-			disabled={isActive}
-			className={'rounded-small h-8 font-bold ' + KlassName}>
+			className={'rounded-small h-8 font-bold cursor-pointer ' + KlassName}>
 			{title}
 		</button>
 	);
